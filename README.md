@@ -1,43 +1,20 @@
-# Proyecto Python con Docker - Hola Mundo
 
-Este es un proyecto simple de Python containerizado con Docker que imprime "Hola mundo".
+Contrato de licitación (mensaje)
 
-## Estructura del proyecto
+``` typescript
+interface Message {
+    id: string;
+    status: "pre-processed" | "processed" | "discarded";
+    createdAt: Date;
 
-```
-taller_ms_processor/
-├── app.py          # Aplicación principal
-├── Dockerfile      # Configuración de Docker
-├── requirements.txt # Dependencias (vacío en este caso)
-├── .dockerignore   # Archivos a ignorar en Docker
-└── README.md       # Este archivo
-```
+    payload: {
+        code: string;
+        title: string;
+        description: string;
+        region: string;
+    };
+}
 
-## Cómo ejecutar
-
-### Opción 1: Con Docker (recomendado)
-
-1. Construir la imagen Docker:
-```bash
-docker build -t hola-mundo .
+export default Message;
 ```
 
-2. Ejecutar el contenedor:
-```bash
-docker run hola-mundo
-```
-
-### Opción 2: Localmente con Python
-
-1. Asegúrate de tener Python 3.11+ instalado
-2. Ejecuta la aplicación:
-```bash
-python app.py
-```
-
-## Resultado esperado
-
-Al ejecutar cualquiera de los comandos anteriores, deberías ver:
-```
-Hola mundo
-``` 

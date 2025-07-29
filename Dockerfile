@@ -1,11 +1,23 @@
-# Usar la imagen oficial de Python
-FROM python:3.11-slim
+FROM node:24-alpine AS builder
 
-# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo de la aplicación
-COPY app.py .
+COPY package*.json tsconfig.json ./
 
-# Ejecutar la aplicación
-CMD ["python", "app.py"] 
+RUN npm install
+
+COPY . .
+
+RUN npx tsc
+
+FROM node:24-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 8080
+
+CMD ["node", "dist/index.js"]
