@@ -11,6 +11,7 @@ interface Message {
         code: string;
         title: string;
         description: string;
+        emails: string[];
     };
 }
 
@@ -26,6 +27,7 @@ export default Message;
         "code": "____-__-",
         "title": "Hello, world!",
         "description": "This is a test message",
+        "emails": []
     }
 }
 ```

@@ -1,0 +1,1 @@
+export { newService } from "./service";
