@@ -22,18 +22,18 @@ export function getUsers(this: Service) {
     ) {
       return this.d.state.users;
     }
-    console.log("Getting users");
+
     return [
       {
         id: "1",
         name: "test",
-        email: "vivienda@test.com",
+        email: "smanterola@gmail.com",
         interests: ["vivienda", "naves"],
       },
       {
         id: "2",
         name: "test",
-        email: "seguridad@test.com",
+        email: "seba.contador.molina@gmail.com",
         interests: ["seguridad"],
       },
     ];
