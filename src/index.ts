@@ -2,14 +2,15 @@ import Redis from "ioredis";
 import { suscribe } from "./interface/suscribe";
 import { processMessage } from "./interface/process-message";
 import { sendMessage } from "./interface/send-message";
+import { CONFIGS } from "./configs";
 
 const redisSubscribe = new Redis({
-  host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT || "6379"),
+  host: CONFIGS.HOST,
+  port: CONFIGS.PORT,
 });
 const redisSend = new Redis({
-  host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT || "6379"),
+  host: CONFIGS.HOST,
+  port: CONFIGS.PORT,
 });
 
 suscribe(redisSubscribe)();

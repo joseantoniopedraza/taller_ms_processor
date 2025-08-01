@@ -28,13 +28,13 @@ export function getUsers(this: Service) {
         id: "1",
         name: "test",
         email: "smanterola@gmail.com",
-        interests: ["vivienda", "naves"],
+        interests: ["calderas", "naves"],
       },
       {
         id: "2",
         name: "test",
         email: "seba.contador.molina@gmail.com",
-        interests: ["seguridad"],
+        interests: ["cercado", "naves"],
       },
     ];
     const { data } = await this.d.restClient.get("/users");
