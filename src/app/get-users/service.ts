@@ -4,7 +4,8 @@ import { CONFIGS } from "../../configs";
 
 export function newService(): Service {
   const restClient = axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: CONFIGS.DJANGO_API_URL,
+    timeout: 10000,
   });
 
   return {
@@ -12,6 +13,7 @@ export function newService(): Service {
     getUsers,
   };
 }
+
 
 export function getUsers(this: Service) {
   return async () => {
@@ -23,21 +25,24 @@ export function getUsers(this: Service) {
       return this.d.state.users;
     }
 
-    return [
-      {
-        id: "1",
-        name: "test",
-        email: "smanterola@gmail.com",
-        interests: ["calderas", "naves"],
-      },
-      {
-        id: "2",
-        name: "test",
-        email: "seba.contador.molina@gmail.com",
-        interests: ["cercado", "naves"],
-      },
-    ];
-    const { data } = await this.d.restClient.get("/users");
-    return data;
+    try {      
+      console.log("Getting users");
+      const { data } = await this.d.restClient.get("/clients/");
+      
+      const mappedUsers = data.map((client: any) => ({
+        id: client.id.toString(),
+        name: client.name,
+        email: client.email,
+        interests: client.interests || [],
+      }));
+
+      this.d.state.users = mappedUsers;
+      this.d.state.lastUpdate = new Date();
+      console.log("Users fetched", mappedUsers);
+      return mappedUsers;
+    } catch (error: any) {
+      console.log("Error fetching users", error);
+      return [];
+    }
   };
 }

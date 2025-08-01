@@ -9,4 +9,5 @@ export const CONFIGS = {
   USERS_REFRESH_TIME: 10 * 60 * 1000,
   PORT: parseInt(process.env.REDIS_PORT || "6379"),
   HOST: process.env.REDIS_HOST,
+  DJANGO_API_URL: 'http://taller-ms-persistence:8000',
 };
