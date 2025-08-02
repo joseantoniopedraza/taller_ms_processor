@@ -1,15 +1,15 @@
 import { AxiosInstance } from "axios";
-import { User } from "../../domain/users";
+import { Client } from "../../domain/clients";
 
 export type dependencies = {
   restClient: AxiosInstance;
   state: {
-    users: Array<User>;
+    clients: Array<Client>;
     lastUpdate: Date | null;
   }
 };
 
 export interface Service {
   d: dependencies;
-  getUsers: (this: Service) => () => Promise<Array<User>>;
+  getClients: (this: Service) => () => Promise<Array<Client>>;
 }

@@ -1,15 +1,15 @@
 import { newService, processMessage } from "../service";
 import { Message } from "../../../domain/message-model";
-import { User } from "../../../domain/users";
+import { Client } from "../../../domain/clients";
 import { Service } from "../entities";
 
 // Mock the GoogleGenerativeAI
 jest.mock("@google/generative-ai", () => ({
   GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
     getGenerativeModel: jest.fn().mockReturnValue({
-      generateContent: jest.fn()
-    })
-  }))
+      generateContent: jest.fn(),
+    }),
+  })),
 }));
 
 describe("newService", () => {
@@ -47,33 +47,33 @@ describe("processMessage", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Create mock model
     mockModel = {
-      generateContent: jest.fn()
+      generateContent: jest.fn(),
     };
 
     // Create service with mock dependencies
     mockService = {
       d: { model: mockModel },
-      processMessage
+      processMessage,
     };
   });
 
   it("should process message and return filtered users based on AI response", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "John Doe",
         email: "john@example.com",
-        interests: ["javascript", "react"]
+        interests: ["javascript", "react"],
       },
       {
         id: "2",
         name: "Jane Smith",
         email: "jane@example.com",
-        interests: ["python", "django"]
-      }
+        interests: ["python", "django"],
+      },
     ];
 
     const message: Message = {
@@ -85,22 +85,22 @@ describe("processMessage", () => {
         title: "JavaScript Tutorial",
         description: "Learn modern JavaScript programming",
         tags: ["javascript", "programming"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     // Mock AI responses: first user interested (true), second not interested (false)
     mockModel.generateContent
       .mockResolvedValueOnce({
-        response: { text: () => "true" }
+        response: { text: () => "true" },
       })
       .mockResolvedValueOnce({
-        response: { text: () => "false" }
+        response: { text: () => "false" },
       });
 
     const processMessageFn = mockService.processMessage();
-    const result = await processMessageFn(users, message);
+    const result = await processMessageFn(clients, message);
 
     expect(result.status).toBe("processed");
     expect(result.emails).toEqual(["john@example.com"]);
@@ -108,13 +108,13 @@ describe("processMessage", () => {
   });
 
   it("should handle case when no users are interested", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "John Doe",
         email: "john@example.com",
-        interests: ["python"]
-      }
+        interests: ["python"],
+      },
     ];
 
     const message: Message = {
@@ -126,36 +126,36 @@ describe("processMessage", () => {
         title: "JavaScript Tutorial",
         description: "Learn modern JavaScript programming",
         tags: ["javascript", "programming"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     mockModel.generateContent.mockResolvedValue({
-      response: { text: () => "false" }
+      response: { text: () => "false" },
     });
 
     const processMessageFn = mockService.processMessage();
-    const result = await processMessageFn(users, message);
+    const result = await processMessageFn(clients, message);
 
     expect(result.status).toBe("processed");
     expect(result.emails).toEqual([]);
   });
 
   it("should handle case when all users are interested", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "John Doe",
         email: "john@example.com",
-        interests: ["javascript"]
+        interests: ["javascript"],
       },
       {
         id: "2",
         name: "Jane Smith",
         email: "jane@example.com",
-        interests: ["programming"]
-      }
+        interests: ["programming"],
+      },
     ];
 
     const message: Message = {
@@ -167,34 +167,34 @@ describe("processMessage", () => {
         title: "JavaScript Tutorial",
         description: "Learn modern JavaScript programming",
         tags: ["javascript", "programming"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     mockModel.generateContent
       .mockResolvedValueOnce({
-        response: { text: () => "true" }
+        response: { text: () => "true" },
       })
       .mockResolvedValueOnce({
-        response: { text: () => "TRUE" }
+        response: { text: () => "TRUE" },
       });
 
     const processMessageFn = mockService.processMessage();
-    const result = await processMessageFn(users, message);
+    const result = await processMessageFn(clients, message);
 
     expect(result.status).toBe("processed");
     expect(result.emails).toEqual(["john@example.com", "jane@example.com"]);
   });
 
   it("should handle AI response case insensitively", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "John Doe",
         email: "john@example.com",
-        interests: ["javascript"]
-      }
+        interests: ["javascript"],
+      },
     ];
 
     const message: Message = {
@@ -206,24 +206,24 @@ describe("processMessage", () => {
         title: "JavaScript Tutorial",
         description: "Learn modern JavaScript programming",
         tags: ["javascript", "programming"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     mockModel.generateContent.mockResolvedValue({
-      response: { text: () => "TRUE" }
+      response: { text: () => "TRUE" },
     });
 
     const processMessageFn = mockService.processMessage();
-    const result = await processMessageFn(users, message);
+    const result = await processMessageFn(clients, message);
 
     expect(result.status).toBe("processed");
     expect(result.emails).toEqual(["john@example.com"]);
   });
 
   it("should handle empty users array", async () => {
-    const users: User[] = [];
+    const clients: Client[] = [];
     const message: Message = {
       id: "1",
       status: "pre-processed",
@@ -233,13 +233,13 @@ describe("processMessage", () => {
         title: "JavaScript Tutorial",
         description: "Learn modern JavaScript programming",
         tags: ["javascript", "programming"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     const processMessageFn = mockService.processMessage();
-    const result = await processMessageFn(users, message);
+    const result = await processMessageFn(clients, message);
 
     expect(result.status).toBe("processed");
     expect(result.emails).toEqual([]);
@@ -247,13 +247,13 @@ describe("processMessage", () => {
   });
 
   it("should handle AI service errors gracefully", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "John Doe",
         email: "john@example.com",
-        interests: ["javascript"]
-      }
+        interests: ["javascript"],
+      },
     ];
 
     const message: Message = {
@@ -265,15 +265,17 @@ describe("processMessage", () => {
         title: "JavaScript Tutorial",
         description: "Learn modern JavaScript programming",
         tags: ["javascript", "programming"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     mockModel.generateContent.mockRejectedValue(new Error("AI service error"));
 
     const processMessageFn = mockService.processMessage();
-    
-    await expect(processMessageFn(users, message)).rejects.toThrow("AI service error");
+
+    await expect(processMessageFn(clients, message)).rejects.toThrow( 
+      "AI service error"
+    );
   });
-}); 
+});

@@ -6,7 +6,7 @@ export const CONFIGS = {
   CHANNEL_NAME: "messages",
   GOOGLE_MODEL: "gemini-2.0-flash",
   GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-  USERS_REFRESH_TIME: 10000,
+  CLIENTS_REFRESH_TIME: 10000,
   PORT: parseInt(process.env.REDIS_PORT || "6379"),
   HOST: process.env.REDIS_HOST,
   DJANGO_API_URL: 'http://taller-ms-persistence:3001',

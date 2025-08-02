@@ -1,6 +1,6 @@
 import { GenerativeModel } from "@google/generative-ai";
 import { Message } from "../../domain/message-model";
-import { User } from "../../domain/users";
+import { Client } from "../../domain/clients";    
 
 export type dependencies = {
   model: GenerativeModel;
@@ -8,5 +8,5 @@ export type dependencies = {
 
 export interface Service {
   d: dependencies;
-  processMessage: (this: Service) => (users: Array<User>, message: Message) => Promise<Message>;
+  processMessage: (this: Service) => (clients: Array<Client>, message: Message) => Promise<Message>;
 }

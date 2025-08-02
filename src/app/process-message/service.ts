@@ -2,7 +2,7 @@ import { Message } from "../../domain/message-model";
 import { Service } from "./entities";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { buildPrompt } from "./functions";
-import { User } from "../../domain/users";
+import { Client } from "../../domain/clients";
 import { CONFIGS } from "../../configs";
 
 export function newService(): Service {
@@ -16,11 +16,11 @@ export function newService(): Service {
 }
 
 export function processMessage(this: Service) {
-  return async (users: Array<User>, message: Message) => {
+  return async (clients: Array<Client>, message: Message) => {
     message.status = "processed";
 
-    const promises = users.map(async (user) => {
-      const prompt = buildPrompt(message, user.interests);
+    const promises = clients.map(async (client) => {
+      const prompt = buildPrompt(message, client.interests);
       const result = await this.d.model.generateContent(prompt);
 
       return result.response.text().trim().toLowerCase() === "true";
@@ -28,7 +28,7 @@ export function processMessage(this: Service) {
 
     const results = await Promise.all(promises);
 
-    message.emails = users.filter((_, index) => results[index]).map((user) => user.email);
+    message.emails = clients.filter((_, index) => results[index]).map((client) => client.email);
 
     return message;
   };

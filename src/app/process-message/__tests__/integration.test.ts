@@ -1,11 +1,11 @@
 import { newService } from "../service";
 import { buildPrompt } from "../functions";
 import { Message } from "../../../domain/message-model";
-import { User } from "../../../domain/users";
+import { Client } from "../../../domain/clients";
 
 // Mock the entire service module
 jest.mock("../service", () => ({
-  newService: jest.fn()
+  newService: jest.fn(),
 }));
 
 describe("Process Message Integration Tests", () => {
@@ -14,32 +14,34 @@ describe("Process Message Integration Tests", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Create mock generateContent function
     mockGenerateContent = jest.fn();
-    
+
     // Create mock service
     mockService = {
-      d: { 
-        model: { 
-          generateContent: mockGenerateContent 
-        } 
+      d: {
+        model: {
+          generateContent: mockGenerateContent,
+        },
       },
-      processMessage: function(this: any) {
-        return async (users: Array<User>, message: Message) => {
+      processMessage: function (this: any) {
+        return async (clients: Array<Client>, message: Message) => {
           message.status = "processed";
 
-          const promises = users.map(async (user) => {
-            const prompt = buildPrompt(message, user.interests);
+          const promises = clients.map(async (client) => {
+            const prompt = buildPrompt(message, client.interests);
             const result = await this.d.model.generateContent(prompt);
             return result.response.text().trim().toLowerCase() === "true";
           });
 
           const results = await Promise.all(promises);
-          message.emails = users.filter((_, index) => results[index]).map((user) => user.email);
+          message.emails = clients
+            .filter((_, index) => results[index])
+            .map((client) => client.email);
           return message;
         };
-      }
+      },
     };
 
     // Mock the newService function to return our mock service
@@ -51,25 +53,25 @@ describe("Process Message Integration Tests", () => {
   });
 
   it("should process a complete message flow with multiple users", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "John Doe",
         email: "john@example.com",
-        interests: ["javascript", "react"]
+        interests: ["javascript", "react"],
       },
       {
         id: "2",
         name: "Jane Smith",
         email: "jane@example.com",
-        interests: ["python", "django"]
+        interests: ["python", "django"],
       },
       {
         id: "3",
         name: "Bob Wilson",
         email: "bob@example.com",
-        interests: ["javascript", "nodejs"]
-      }
+        interests: ["javascript", "nodejs"],
+      },
     ];
 
     const message: Message = {
@@ -79,28 +81,29 @@ describe("Process Message Integration Tests", () => {
       payload: {
         id: "1",
         title: "Advanced JavaScript Patterns",
-        description: "Learn advanced JavaScript programming patterns and best practices",
+        description:
+          "Learn advanced JavaScript programming patterns and best practices",
         tags: ["javascript", "programming", "patterns"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     // Mock AI responses: John (true), Jane (false), Bob (true)
     mockGenerateContent
       .mockResolvedValueOnce({
-        response: { text: () => "true" }
+        response: { text: () => "true" },
       })
       .mockResolvedValueOnce({
-        response: { text: () => "false" }
+        response: { text: () => "false" },
       })
       .mockResolvedValueOnce({
-        response: { text: () => "true" }
+        response: { text: () => "true" },
       });
 
     const service = newService();
     const processMessageFn = service.processMessage();
-    const result = await processMessageFn(users, message);
+    const result = await processMessageFn(clients, message);
 
     // Verify the result
     expect(result.status).toBe("processed");
@@ -112,20 +115,22 @@ describe("Process Message Integration Tests", () => {
 
     // Verify the prompts were built correctly
     const calls = mockGenerateContent.mock.calls;
-    expect(calls[0][0]).toContain("Advanced JavaScript Patterns + Learn advanced JavaScript programming patterns and best practices");
+    expect(calls[0][0]).toContain(
+      "Advanced JavaScript Patterns + Learn advanced JavaScript programming patterns and best practices"
+    );
     expect(calls[0][0]).toContain("javascript, react");
     expect(calls[1][0]).toContain("python, django");
     expect(calls[2][0]).toContain("javascript, nodejs");
   });
 
   it("should handle edge case with no matching users", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "Alice",
         email: "alice@example.com",
-        interests: ["python", "machine-learning"]
-      }
+        interests: ["python", "machine-learning"],
+      },
     ];
 
     const message: Message = {
@@ -137,18 +142,18 @@ describe("Process Message Integration Tests", () => {
         title: "JavaScript Fundamentals",
         description: "Basic JavaScript concepts for beginners",
         tags: ["javascript", "basics"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     mockGenerateContent.mockResolvedValue({
-      response: { text: () => "false" }
+      response: { text: () => "false" },
     });
 
     const service = newService();
     const processMessageFn = service.processMessage();
-    const result = await processMessageFn(users, message);
+    const result = await processMessageFn(clients, message);
 
     expect(result.status).toBe("processed");
     expect(result.emails).toEqual([]);
@@ -156,13 +161,13 @@ describe("Process Message Integration Tests", () => {
   });
 
   it("should handle case insensitive AI responses", async () => {
-    const users: User[] = [
+    const clients: Client[] = [
       {
         id: "1",
         name: "Test User",
         email: "test@example.com",
-        interests: ["javascript"]
-      }
+        interests: ["javascript"],
+      },
     ];
 
     const message: Message = {
@@ -174,9 +179,9 @@ describe("Process Message Integration Tests", () => {
         title: "JavaScript Tutorial",
         description: "Learn JavaScript programming",
         tags: ["javascript"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     // Test different case variations
@@ -184,14 +189,15 @@ describe("Process Message Integration Tests", () => {
 
     for (const testCase of testCases) {
       mockGenerateContent.mockResolvedValue({
-        response: { text: () => testCase }
+        response: { text: () => testCase },
       });
 
       const service = newService();
       const processMessageFn = service.processMessage();
-      const result = await processMessageFn(users, message);
+      const result = await processMessageFn(clients, message);
 
-      const expectedEmails = testCase.toLowerCase() === "true" ? ["test@example.com"] : [];
+      const expectedEmails =
+        testCase.toLowerCase() === "true" ? ["test@example.com"] : [];
       expect(result.emails).toEqual(expectedEmails);
     }
   });
@@ -206,9 +212,9 @@ describe("Process Message Integration Tests", () => {
         title: "Test Title",
         description: "Test Description",
         tags: ["test"],
-        region: "global"
+        region: "global",
       },
-      emails: []
+      emails: [],
     };
 
     const interests = ["interest1", "interest2"];
@@ -217,7 +223,9 @@ describe("Process Message Integration Tests", () => {
 
     expect(prompt).toContain("Test Title + Test Description");
     expect(prompt).toContain("interest1, interest2");
-    expect(prompt).toContain("¿Al menos una de estas palabras pertenece al contexto del texto?");
-    expect(prompt).toContain("Responde solo con \"true\" o \"false\"");
+    expect(prompt).toContain(
+      "¿Al menos una de estas palabras pertenece al contexto del texto?"
+    );
+    expect(prompt).toContain('Responde solo con "true" o "false"');
   });
-}); 
+});
