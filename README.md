@@ -82,14 +82,13 @@ taller_ms_processor/
 #### `/src/app/`
 Contiene la lógica de aplicación organizada por casos de uso:
 
-- **`get-clients/`**: Maneja la obtención de clientes desde la API de Django con sistema de cache para optimizar rendimiento
+- **`get-users/`**: Maneja la obtención de usuarios desde la API de Django con sistema de cache para optimizar rendimiento
 - **`process-message/`**: Contiene la lógica principal de procesamiento de mensajes usando Google Gemini AI
 
 #### `/src/domain/`
 Define los modelos de datos y tipos del dominio:
 
 - **`message-model.ts`**: Define la estructura del mensaje de licitación
-- **`clients.ts`**: Define el tipo de cliente con sus intereses
 - **`users.ts`**: Define el tipo de usuario con sus intereses
 
 #### `/src/interface/`
@@ -171,56 +170,6 @@ npm run prepare
 ```
 
 El hook se ejecutará automáticamente en cada commit, asegurando que el código cumpla con los estándares de calidad.
-
-## Testing
-
-El proyecto incluye una suite completa de tests organizados por módulos:
-
-### Estructura de Tests
-
-```
-src/app/
-├── get-clients/
-│   └── __tests__/
-│       ├── service.test.ts      # Tests unitarios del servicio
-│       ├── integration.test.ts  # Tests de integración
-│       └── entities.test.ts     # Tests de entidades
-└── process-message/
-    └── __tests__/
-        ├── service.test.ts      # Tests unitarios del servicio
-        ├── integration.test.ts  # Tests de integración
-        └── functions.test.ts    # Tests de funciones auxiliares
-```
-
-### Cobertura de Tests
-
-#### **get-clients Module**
-- **Service Tests**: Prueban la lógica de obtención de clientes, cache, manejo de errores
-- **Integration Tests**: Prueban la integración completa con axios y la API
-- **Entity Tests**: Prueban las definiciones de tipos y interfaces
-
-#### **process-message Module**
-- **Service Tests**: Prueban el procesamiento de mensajes con Google Gemini AI
-- **Integration Tests**: Prueban el flujo completo de procesamiento
-- **Function Tests**: Prueban las funciones auxiliares de construcción de prompts
-
-### Ejecución de Tests
-
-```bash
-# Ejecutar todos los tests
-npm test
-
-# Ejecutar tests con coverage
-npm test -- --coverage
-
-# Ejecutar tests en modo watch
-npm test -- --watch
-```
-
-### Estadísticas Actuales
-- **Total de Tests**: 45 tests
-- **Test Suites**: 6 suites
-- **Cobertura**: Tests unitarios, integración y entidades
 
 ## Modelo de Mensaje
 
