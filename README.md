@@ -45,25 +45,33 @@ El servicio utiliza un patrón de **Clean Architecture** con separación clara d
 taller_ms_processor/
 ├── src/
 │   ├── app/                          # Capa de aplicación - Casos de uso
-│   │   ├── get-users/               # Obtención de usuarios desde Django API
+│   │   ├── get-clients/             # Obtención de clientes desde Django API
 │   │   │   ├── entities.ts          # Entidades del servicio
 │   │   │   ├── index.ts             # Punto de entrada del módulo
-│   │   │   └── service.ts           # Lógica de obtención de usuarios con cache
+│   │   │   ├── service.ts           # Lógica de obtención de clientes con cache
+│   │   │   └── __tests__/           # Tests del módulo get-clients
+│   │   │       ├── service.test.ts  # Tests unitarios del servicio
+│   │   │       ├── integration.test.ts # Tests de integración
+│   │   │       └── entities.test.ts # Tests de entidades
 │   │   └── process-message/         # Procesamiento principal de mensajes
 │   │       ├── entities.ts          # Entidades del servicio
 │   │       ├── functions.ts         # Funciones auxiliares (construcción de prompts)
 │   │       ├── index.ts             # Punto de entrada del módulo
-│   │       └── service.ts           # Lógica de procesamiento con Google Gemini
+│   │       ├── service.ts           # Lógica de procesamiento con Google Gemini
+│   │       └── __tests__/           # Tests del módulo process-message
+│   │           ├── service.test.ts  # Tests unitarios del servicio
+│   │           ├── integration.test.ts # Tests de integración
+│   │           └── functions.test.ts # Tests de funciones auxiliares
 │   ├── configs.ts                   # Configuración centralizada
 │   ├── domain/                      # Capa de dominio - Modelos de datos
 │   │   ├── message-model.ts         # Interfaz del mensaje de licitación
+│   │   ├── clients.ts               # Tipo de cliente
 │   │   └── users.ts                 # Tipo de usuario
 │   ├── interface/                   # Capa de interfaz - Adaptadores
 │   │   ├── process-message.ts       # Adaptador para procesamiento de mensajes
 │   │   ├── send-message.ts          # Adaptador para envío de mensajes
 │   │   └── suscribe.ts              # Adaptador para suscripción a Redis
 │   └── index.ts                     # Punto de entrada principal
-├── tests/                           # Tests unitarios e integración
 ├── package.json                     # Dependencias y scripts
 ├── tsconfig.json                    # Configuración de TypeScript
 └── Dockerfile                       # Configuración de contenedor
@@ -74,13 +82,14 @@ taller_ms_processor/
 #### `/src/app/`
 Contiene la lógica de aplicación organizada por casos de uso:
 
-- **`get-users/`**: Maneja la obtención de usuarios desde la API de Django con sistema de cache para optimizar rendimiento
+- **`get-clients/`**: Maneja la obtención de clientes desde la API de Django con sistema de cache para optimizar rendimiento
 - **`process-message/`**: Contiene la lógica principal de procesamiento de mensajes usando Google Gemini AI
 
 #### `/src/domain/`
 Define los modelos de datos y tipos del dominio:
 
 - **`message-model.ts`**: Define la estructura del mensaje de licitación
+- **`clients.ts`**: Define el tipo de cliente con sus intereses
 - **`users.ts`**: Define el tipo de usuario con sus intereses
 
 #### `/src/interface/`
@@ -162,6 +171,56 @@ npm run prepare
 ```
 
 El hook se ejecutará automáticamente en cada commit, asegurando que el código cumpla con los estándares de calidad.
+
+## Testing
+
+El proyecto incluye una suite completa de tests organizados por módulos:
+
+### Estructura de Tests
+
+```
+src/app/
+├── get-clients/
+│   └── __tests__/
+│       ├── service.test.ts      # Tests unitarios del servicio
+│       ├── integration.test.ts  # Tests de integración
+│       └── entities.test.ts     # Tests de entidades
+└── process-message/
+    └── __tests__/
+        ├── service.test.ts      # Tests unitarios del servicio
+        ├── integration.test.ts  # Tests de integración
+        └── functions.test.ts    # Tests de funciones auxiliares
+```
+
+### Cobertura de Tests
+
+#### **get-clients Module**
+- **Service Tests**: Prueban la lógica de obtención de clientes, cache, manejo de errores
+- **Integration Tests**: Prueban la integración completa con axios y la API
+- **Entity Tests**: Prueban las definiciones de tipos y interfaces
+
+#### **process-message Module**
+- **Service Tests**: Prueban el procesamiento de mensajes con Google Gemini AI
+- **Integration Tests**: Prueban el flujo completo de procesamiento
+- **Function Tests**: Prueban las funciones auxiliares de construcción de prompts
+
+### Ejecución de Tests
+
+```bash
+# Ejecutar todos los tests
+npm test
+
+# Ejecutar tests con coverage
+npm test -- --coverage
+
+# Ejecutar tests en modo watch
+npm test -- --watch
+```
+
+### Estadísticas Actuales
+- **Total de Tests**: 45 tests
+- **Test Suites**: 6 suites
+- **Cobertura**: Tests unitarios, integración y entidades
 
 ## Modelo de Mensaje
 

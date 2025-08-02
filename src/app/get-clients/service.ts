@@ -20,7 +20,7 @@ export function getClients(this: Service) {
     if (
       this.d.state.lastUpdate &&
       this.d.state.lastUpdate >
-        new Date(Date.now() - CONFIGS.CLIENTS_REFRESH_TIME)
+        new Date(Date.now() - CONFIGS.CLIENTS_REFRESH_TIME) 
     ) {
       return this.d.state.clients;
     }
