@@ -182,8 +182,6 @@ interface Message {
     id: string;
     title: string;
     description: string;
-    tags: string[];
-    region: string;
   };
   emails: string[];
 }
@@ -199,9 +197,7 @@ interface Message {
   "payload": {
     "id": "lic-001",
     "title": "Construcción de puente",
-    "description": "Proyecto de construcción de puente en la región norte",
-    "tags": ["construcción", "infraestructura"],
-    "region": "norte"
+    "description": "Proyecto de construcción de puente en la región norte"
   },
   "emails": []
 }
