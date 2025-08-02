@@ -4,6 +4,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
 # Environment variables
 .env
 .env.local
@@ -11,15 +16,19 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
 # Logs
 logs
 *.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
 
 # Coverage directory used by tools like istanbul
 coverage/
@@ -29,7 +38,6 @@ coverage/
 .nyc_output
 
 # Dependency directories
-node_modules/
 jspm_packages/
 
 # Optional npm cache directory
@@ -53,9 +61,6 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env.test
-
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
@@ -65,11 +70,6 @@ jspm_packages/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
-
-# Gatsby files
-.cache/
-public
 
 # Storybook build outputs
 .out
@@ -77,23 +77,4 @@ public
 
 # Temporary folders
 tmp/
-temp/
-
-# Editor directories and files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Docker
-.dockerignore 
+temp/ 

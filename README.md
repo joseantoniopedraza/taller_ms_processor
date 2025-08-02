@@ -129,7 +129,39 @@ npm run build
 
 # Tests
 npm test
+
+# Linting
+npm run lint
+npm run lint:fix
+
+# Pre-commit (ejecuta lint y tests)
+npm run pre-commit
 ```
+
+## Pre-commit Hook
+
+El proyecto incluye un pre-commit hook configurado con **Husky** y **lint-staged** que ejecuta automáticamente:
+
+1. **ESLint**: Análisis de código y corrección automática de errores de formato
+2. **Tests**: Ejecución de tests relacionados con los archivos modificados
+
+### Configuración
+
+- **Husky**: Maneja los git hooks
+- **lint-staged**: Ejecuta linter y tests solo en archivos staged
+- **ESLint**: Configurado para TypeScript con reglas específicas del proyecto
+
+### Instalación
+
+```bash
+# Instalar dependencias
+npm install
+
+# Configurar Husky (se ejecuta automáticamente con npm install)
+npm run prepare
+```
+
+El hook se ejecutará automáticamente en cada commit, asegurando que el código cumpla con los estándares de calidad.
 
 ## Modelo de Mensaje
 

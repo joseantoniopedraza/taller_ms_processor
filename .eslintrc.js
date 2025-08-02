@@ -1,23 +1,27 @@
 module.exports = {
-  env: {
-    node: true,
-    es2021: true,
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: 'module',
   },
+  plugins: ['@typescript-eslint'],
   extends: [
     'eslint:recommended',
   ],
-  parserOptions: {
-    ecmaVersion: 12,
-    sourceType: 'module',
-  },
   rules: {
-    'indent': ['error', 2],
-    'linebreak-style': ['error', 'unix'],
-    'quotes': ['error', 'single'],
-    'semi': ['error', 'always'],
-    'no-unused-vars': ['warn'],
-    'no-console': 'off',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    'no-console': 'off', // Allow console.log for debugging
     'prefer-const': 'error',
     'no-var': 'error',
   },
+  env: {
+    node: true,
+    es6: true,
+    jest: true,
+  },
+  ignorePatterns: ['dist/', 'node_modules/', '*.js'],
 }; 
